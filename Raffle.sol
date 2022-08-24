@@ -23,7 +23,6 @@ contract Raffle {
         uint _time,
         bool _growing
     ) payable {
-        require(_time <= 1 minutes, "Invalid time");
         startingTime = block.timestamp;
         reward = msg.value;
         minprice = _minprice;
@@ -59,7 +58,12 @@ contract Raffle {
     /// @dev function called to participate in the raffle
     function participate() public payable isEnough {
         require(!paid, "Raffle is already over");
+        require(
+            block.timestamp - startingTime <= time,
+            "Raffle has ended"
+        );
         if (growing) minprice = msg.value;
+        currentReceiver = msg.sender;
         startingTime = block.timestamp;
         (bool sent, ) = owner.call{value: msg.value}("");
         require(sent, "Failed to send");

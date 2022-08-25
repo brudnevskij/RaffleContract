@@ -12,10 +12,14 @@ contract Raffle {
     uint public time;
     //amount of fees sent to owner
     uint private fees;
+    // selling price
+    uint public sellPrice;
     // flag to check if reward has been withdrawn or not
     bool public paid;
     // flag to check if participating price will increase, depending on last participation price
     bool public growing;
+    //  flag to check is this raffle on sale
+    bool public forSale;
     address public owner;
     // last participant
     address public currentReceiver;
@@ -87,7 +91,34 @@ contract Raffle {
     function getFees()calledByOwner public view returns(uint){
         return fees;
     }
+    ///@notice sets price for sale, and allows to buy this raffle
+    function sellRaffle(uint _sellPrice) public calledByOwner{
+        sellPrice = _sellPrice;
+        forSale = true;
+    }
 
+    function stopSale() public calledByOwner{
+        require(forSale, "You are not selling this raffle");
+        forSale = false;
+    }
+
+    function renewSale() public calledByOwner{
+        require(!forSale, "You are already selling this raffle");
+        forSale = true;
+    }
+    ///@notice allows anyone to buy raffle
+    function buyRaffle() public payable {
+        require(
+            msg.value >= sellPrice,
+            "Not enough funds"
+        );
+        (bool sent, ) = payable(owner).call{value: msg.value}("");
+        require( sent, "Failed to send");
+        forSale = false;
+        owner = msg.sender;
+    }
+
+    
     /// @dev if you have been holder for an enough time, you can withdraw your reward
     function getReward() public payable isNotPaid isTime {
         paid = true;

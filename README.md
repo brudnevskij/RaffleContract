@@ -10,4 +10,7 @@ if participant pays amount that is more than minimal participation price, it wil
 Upon deployement owner requested to set reward as a value of transaction, participation price, time to hold contract in seconds,
 true/false if contract is growing or not.
 
+You can also sell your raffle to someone else and perform a bit of risk management, which adds to a raffle a bit of
+"derrivative finance" functionality.
+
 Any feedback would be appreciated.

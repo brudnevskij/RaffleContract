@@ -10,6 +10,8 @@ contract Raffle {
     uint public minprice;
     // time after winner allowed to withdraw reward, in seconds
     uint public time;
+    //amount of fees sent to owner
+    uint private fees;
     // flag to check if reward has been withdrawn or not
     bool public paid;
     // flag to check if participating price will increase, depending on last participation price
@@ -29,6 +31,7 @@ contract Raffle {
         owner = msg.sender;
         time = _time;
         growing = _growing;
+        fees = 0;
     }
 
     receive() external payable {
@@ -54,6 +57,13 @@ contract Raffle {
         );
         _;
     }
+    modifier calledByOwner(){
+        require(
+            msg.sender == owner,
+            "You are not allowed to do this"
+        );
+        _;
+    }
 
     /// @dev function called to participate in the raffle
     function participate() public payable isEnough {
@@ -67,10 +77,15 @@ contract Raffle {
         startingTime = block.timestamp;
         (bool sent, ) = owner.call{value: msg.value}("");
         require(sent, "Failed to send");
+        fees+= msg.value;
     }
 
     function getBalance() public view returns (uint) {
         return address(this).balance;
+    }
+
+    function getFees()calledByOwner public view returns(uint){
+        return fees;
     }
 
     /// @dev if you have been holder for an enough time, you can withdraw your reward
@@ -83,7 +98,9 @@ contract Raffle {
     // participants are not limited to pay more than minprice, if contract is not "growing" it will lead to leftovers in contract balance
     // owner allowed to withdraw such "premium"
     function getPremium() public payable isPaid {
+        uint _fees = address(this).balance;
         (bool sent, ) = payable(owner).call{value: address(this).balance}("");
         require(sent, "Failed to send");
+        fees+=_fees;
     }
 }

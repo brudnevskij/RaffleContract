@@ -72,6 +72,7 @@ contract Raffle {
     /// @dev function called to participate in the raffle
     function participate() public payable isEnough {
         require(!paid, "Raffle is already over");
+	require(msg.sender != owner, "Owner can not participate");
         require(
             block.timestamp - startingTime <= time,
             "Raffle has ended"

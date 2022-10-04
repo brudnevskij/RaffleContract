@@ -1,4 +1,4 @@
-#Raffle Solidity Contract
+# Raffle Solidity Contract
 
 Raffle contract allows deployer to arrange a giveaway and let participants to buy right to win.
 To win and get reward participant supposed to pay a minimal amount of weis and be last participant for required amount of time, 
@@ -12,5 +12,3 @@ true/false if contract is growing or not.
 
 You can also sell your raffle to someone else and perform a bit of risk management, which adds to a raffle a bit of
 "derrivative finance" functionality.
-
-Any feedback would be appreciated.
